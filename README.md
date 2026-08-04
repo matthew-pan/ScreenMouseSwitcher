@@ -64,27 +64,6 @@ chmod +x build.sh
 
 > 说明：每屏直达按「屏幕排列序号」（左→右、上→下）保存；更换显示器排列后序号会按新排列重新映射。
 
-## 后续：正式签名与公证（对外分发）
-
-当前 `build.sh` 只做 ad-hoc 签名，别人机器上首次需右键打开。若要对外免提示分发，需要 Apple 开发者账号（99 美元/年），然后启用脚本中预留的步骤：
-
-1. 用 Developer ID 签名 `.app`：
-
-   ```bash
-   codesign --deep --force --options runtime \
-     --sign "Developer ID Application: 你的名字 (TEAMID)" build/ScreenMouseSwitcher.app
-   ```
-
-2. 公证 DMG 并装订：
-
-   ```bash
-   xcrun notarytool submit build/ScreenMouseSwitcher-1.0.dmg \
-     --apple-id <你的AppleID> --team-id <TEAMID> --password <App专用密码> --wait
-   xcrun stapler staple build/ScreenMouseSwitcher-1.0.dmg
-   ```
-
-`build.sh` 中已用注释标出这两处 hook 的位置。
-
 ## 项目结构
 
 ```
