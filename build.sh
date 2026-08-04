@@ -112,12 +112,39 @@ mkdir -p "$DMG_STAGE"
 cp -R "$APP_BUNDLE" "$DMG_STAGE/"
 ln -s /Applications "$DMG_STAGE/Applications"
 
+# 让 DMG 卷图标与 App 图标一致。
+APP_ICNS="$APP_BUNDLE/Contents/Resources/AppIcon.icns"
+DMG_HAS_ICON=0
+if [ -f "$APP_ICNS" ]; then
+  cp "$APP_ICNS" "$DMG_STAGE/.VolumeIcon.icns"
+  DMG_HAS_ICON=1
+fi
+
 rm -f "$DMG_PATH"
-hdiutil create \
-  -volname "$DISPLAY_NAME" \
-  -srcfolder "$DMG_STAGE" \
-  -ov -format UDZO \
-  "$DMG_PATH" >/dev/null
+if [ "$DMG_HAS_ICON" = "1" ]; then
+  # 先建可写 dmg，挂载后打上自定义图标位，再压缩为只读发行版。
+  RW_DMG="$WORK_DIR/$APP_NAME-rw.dmg"
+  rm -f "$RW_DMG"
+  hdiutil create \
+    -volname "$DISPLAY_NAME" \
+    -srcfolder "$DMG_STAGE" \
+    -ov -format UDRW \
+    "$RW_DMG" >/dev/null
+  MOUNT_DIR="$WORK_DIR/mnt"
+  mkdir -p "$MOUNT_DIR"
+  hdiutil attach "$RW_DMG" -noautoopen -mountpoint "$MOUNT_DIR" >/dev/null
+  SetFile -a C "$MOUNT_DIR" 2>/dev/null || true
+  hdiutil detach "$MOUNT_DIR" >/dev/null || diskutil unmount "$MOUNT_DIR" >/dev/null 2>&1 || true
+  hdiutil convert "$RW_DMG" -format UDZO -ov -o "$DMG_PATH" >/dev/null
+  rm -f "$RW_DMG"
+  echo "    DMG 卷图标已设置"
+else
+  hdiutil create \
+    -volname "$DISPLAY_NAME" \
+    -srcfolder "$DMG_STAGE" \
+    -ov -format UDZO \
+    "$DMG_PATH" >/dev/null
+fi
 
 echo ""
 echo "==> 校验签名"
