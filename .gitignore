@@ -1,0 +1,17 @@
+# 构建产物
+build/
+.build/
+*.dmg
+*.app
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Xcode / SwiftPM
+*.xcodeproj
+Package.resolved
+.swiftpm/
+DerivedData/
