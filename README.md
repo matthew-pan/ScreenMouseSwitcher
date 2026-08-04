@@ -84,6 +84,10 @@ chmod +x build.sh
 └── docs/superpowers/specs/           # 设计文档
 ```
 
+## 安装包
+
+https://github.com/matthew-pan/ScreenMouseSwitcher/releases/tag/v1.0
+
 ## 版本历史
 
 - **v1.0**（首个正式版）—— 菜单栏后台运行、开机自启、辅助功能授权引导；可视化设置面板（按显示器真实排列画缩略图）；支持**方向键切换**（`⌘⌃←/→/↑/↓` 跳相邻屏）与**每屏直达**（每块屏单配一个快捷键）；快捷键采用**录入式**输入；保存时冲突检测、显示器热插拔实时刷新；打包通用 `.dmg`。
