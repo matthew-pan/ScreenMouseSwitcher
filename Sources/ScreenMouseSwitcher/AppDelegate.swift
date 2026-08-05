@@ -8,6 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let hotkey = HotkeyManager()
     private var permissionTimer: Timer?
     private var settingsController: SettingsWindowController?
+    private var hotkeyError: String?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
@@ -47,7 +48,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(titleItem)
         menu.addItem(.separator())
 
-        let statusText = hotkey.isRunning ? "状态：监听中" : "状态：等待「辅助功能」授权"
+        let statusText: String
+        if hotkey.isRunning {
+            statusText = "状态：监听中"
+        } else if let hotkeyError {
+            statusText = "状态：\(hotkeyError)"
+        } else {
+            statusText = "状态：等待「辅助功能」授权"
+        }
         let statusMenuItem = NSMenuItem(title: statusText, action: nil, keyEquivalent: "")
         statusMenuItem.isEnabled = false
         menu.addItem(statusMenuItem)
@@ -78,7 +86,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func ensureAccessibilityAndStart() {
         if AXIsProcessTrusted() {
-            hotkey.start()
+            startHotkey()
             rebuildMenu()
             return
         }
@@ -94,9 +102,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if AXIsProcessTrusted() {
                 timer.invalidate()
                 self.permissionTimer = nil
-                self.hotkey.start()
+                self.startHotkey()
                 self.rebuildMenu()
             }
+        }
+    }
+
+    private func startHotkey() {
+        do {
+            try hotkey.start()
+            hotkeyError = nil
+        } catch {
+            hotkeyError = "快捷键监听启动失败，请重新授权并重启"
+            NSLog("无法创建全局快捷键事件监听：%@", error.localizedDescription)
         }
     }
 
