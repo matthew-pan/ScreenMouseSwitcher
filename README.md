@@ -2,6 +2,8 @@
 
 一个纯原生的 macOS 后台小工具：用快捷键让鼠标指针在多块屏幕之间快速切换，指针落在目标屏的**正中心**。
 
+[⬇️ 下载最新正式版 DMG](https://github.com/matthew-pan/ScreenMouseSwitcher/releases/latest)
+
 - 不依赖任何第三方工具或库，只用 macOS 自带框架（AppKit / CoreGraphics）。
 - 菜单栏后台运行，无 Dock 图标。
 - 支持开机自启（系统原生 `SMAppService`）。
@@ -39,10 +41,12 @@ chmod +x build.sh
 
 ## 安装与授权
 
-1. 打开 `build/ScreenMouseSwitcher-1.0.dmg`，把 **屏幕鼠标切换** 拖到 `Applications`。
+1. 从 [GitHub Releases](https://github.com/matthew-pan/ScreenMouseSwitcher/releases/latest) 下载并打开 `ScreenMouseSwitcher-1.0.dmg`，把 **屏幕鼠标切换** 拖到 `Applications`。
 2. 首次打开（未签名版）：在 `应用程序` 里 **右键 → 打开**，在弹窗中确认「打开」，以绕过 Gatekeeper。
 3. 首次运行会提示授予「辅助功能」权限。到 **系统设置 → 隐私与安全性 → 辅助功能**，勾选「屏幕鼠标切换」。菜单里也有「打开辅助功能设置…」快捷入口。
 4. 授权后菜单栏状态变为「监听中」，即可用快捷键切换。
+
+升级或重新部署时，请先退出并删除旧版 App，再安装新版；随后在「辅助功能」中删除旧记录并重新添加 `/Applications/ScreenMouseSwitcher.app`。只运行 `/Applications` 中的安装版本，不要直接运行项目 `build/` 目录中的 App。
 
 菜单栏图标菜单包含：
 
