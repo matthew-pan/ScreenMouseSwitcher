@@ -18,7 +18,11 @@ enum MouseMover {
         guard screens.count > 1 else { return }
 
         let current = ScreenLayout.screen(containing: location, in: screens) ?? screens[0]
-        if let target = ScreenLayout.neighbor(of: current, direction: direction, in: screens) {
+        // 保留初版最可靠的主快捷键语义：右方向键按排列顺序循环切屏。
+        let target = direction == .right
+            ? ScreenLayout.nextScreen(after: current, in: screens)
+            : ScreenLayout.neighbor(of: current, direction: direction, in: screens)
+        if let target {
             move(to: target)
         }
     }

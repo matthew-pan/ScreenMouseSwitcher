@@ -31,7 +31,22 @@ enum ScreenLayout {
 
     /// 包含指定点的屏幕。
     static func screen(containing point: CGPoint, in screens: [ScreenInfo]) -> ScreenInfo? {
-        screens.first { $0.bounds.contains(point) }
+        var displayID: CGDirectDisplayID = 0
+        var count: UInt32 = 0
+        guard CGGetDisplaysWithPoint(point, 1, &displayID, &count) == .success,
+              count > 0 else {
+            return screens.first { $0.bounds.contains(point) }
+        }
+        return screens.first { $0.displayID == displayID }
+    }
+
+    /// 按排列顺序选择下一块屏幕，最后一块回绕到第一块。
+    static func nextScreen(after current: ScreenInfo, in screens: [ScreenInfo]) -> ScreenInfo? {
+        guard screens.count > 1,
+              let position = screens.firstIndex(where: { $0.displayID == current.displayID }) else {
+            return nil
+        }
+        return screens[(position + 1) % screens.count]
     }
 
     /// 从 current 出发，向 direction 方向找最近的相邻屏。
